@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { BlockType } from "../types";
 
@@ -8,8 +7,9 @@ export const generateContent = async (prompt: string): Promise<{
   title?: string;
   language?: string;
 }> => {
-  // Always initialize as instructed using process.env.API_KEY
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  // Use the API_KEY from the environment
+  const apiKey = process.env.API_KEY || "";
+  const ai = new GoogleGenAI({ apiKey });
   
   // Decide the content type first
   const classifierResponse = await ai.models.generateContent({
@@ -24,8 +24,8 @@ export const generateContent = async (prompt: string): Promise<{
     Return ONLY the category word.`,
   });
 
-  // Extract text using the .text property (not a method)
-  const category = (classifierResponse.text?.trim().toLowerCase() as BlockType) || 'text';
+  const categoryStr = classifierResponse.text?.trim().toLowerCase();
+  const category = (categoryStr as BlockType) || 'text';
 
   if (category === 'image') {
     const imageResponse = await ai.models.generateContent({
@@ -39,10 +39,14 @@ export const generateContent = async (prompt: string): Promise<{
     });
 
     let imageUrl = '';
+    
+    // Bulletproof extraction for TypeScript strict mode
     const candidate = imageResponse.candidates?.[0];
-    if (candidate) {
-      for (const part of candidate.content.parts) {
-        if (part.inlineData) {
+    const parts = candidate?.content?.parts;
+
+    if (parts && Array.isArray(parts)) {
+      for (const part of parts) {
+        if (part.inlineData && part.inlineData.data) {
           imageUrl = `data:image/png;base64,${part.inlineData.data}`;
           break;
         }
@@ -61,7 +65,7 @@ export const generateContent = async (prompt: string): Promise<{
     model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
-      systemInstruction: `You are a creative assistant on a canvas. 
+      systemInstruction: `You are a creative assistant for SAI POORNA. 
       If the user wants code, provide only the code block. 
       If the user wants an idea, provide a structured list.
       If the user wants text, provide formatted markdown.`,

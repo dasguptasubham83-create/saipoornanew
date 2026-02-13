@@ -4,9 +4,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // This allows process.env.API_KEY to be accessible in the browser
+    // This shims process.env for the browser environment
     'process.env': {
-      API_KEY: process.env.API_KEY || process.env.GEMINI_API_KEY
+      API_KEY: process.env.API_KEY || process.env.GEMINI_API_KEY || ""
     }
   },
   server: {
