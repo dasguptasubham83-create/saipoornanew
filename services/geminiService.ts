@@ -8,8 +8,7 @@ export const generateContent = async (prompt: string): Promise<{
   title?: string;
   language?: string;
 }> => {
-  // Initialize exactly as instructed in the guidelines
-  // Use process.env.API_KEY as the primary key source
+  // Always initialize as instructed using process.env.API_KEY
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   
   // Decide the content type first
@@ -25,6 +24,7 @@ export const generateContent = async (prompt: string): Promise<{
     Return ONLY the category word.`,
   });
 
+  // Extract text using the .text property (not a method)
   const category = (classifierResponse.text?.trim().toLowerCase() as BlockType) || 'text';
 
   if (category === 'image') {
@@ -61,7 +61,7 @@ export const generateContent = async (prompt: string): Promise<{
     model: 'gemini-3-flash-preview',
     contents: prompt,
     config: {
-      systemInstruction: `You are a creative assistant on a blank canvas. 
+      systemInstruction: `You are a creative assistant on a canvas. 
       If the user wants code, provide only the code block. 
       If the user wants an idea, provide a structured list.
       If the user wants text, provide formatted markdown.`,
