@@ -12,7 +12,10 @@
             scroll-behavior: smooth;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+        *, *::before, *::after { box-sizing: inherit; }
+
         .font-cinzel { font-family: 'Cinzel', serif; }
         .font-roboto-serif { font-family: 'Roboto Serif', serif; }
         .font-roboto { font-family: 'Roboto', sans-serif; }
@@ -20,22 +23,88 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .product-wrapper { position: relative; max-width: 1100px; margin: auto; overflow: hidden; padding: 40px 0; }
-        .product-track { display: flex; justify-content: center; align-items: center; transition: transform 0.6s ease; }
-        .product-card { flex: 0 0 33.333%; padding: 20px; transition: transform 0.5s ease, opacity 0.5s ease; }
-        @media (max-width: 768px) { .product-card { flex: 0 0 100%; } }
-        .product-card img { width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .product-card.center { transform: scale(1.1); z-index: 10; opacity: 1; }
-        .product-card:not(.center) { opacity: 0.6; }
+        .product-wrapper { 
+            position: relative; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            overflow: visible; 
+            padding: 60px 0; 
+        }
+        .product-track { 
+          display: flex; 
+          justify-content: center; 
+          align-items: center; 
+          transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          user-select: none;
+          touch-action: pan-y;
+          width: 100%;
+          min-width: 100%;
+        }
+        .product-card { 
+          flex: 0 0 33.333%; 
+          padding: 0 15px; 
+          transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+          display: flex;
+          justify-content: center;
+        }
+        @media (max-width: 768px) { 
+          .product-card { flex: 0 0 100%; padding: 0 20px; } 
+          .product-wrapper { overflow: hidden; }
+        }
+        
+        .product-card img { 
+          width: 100%; 
+          border-radius: 12px; 
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+          -webkit-user-drag: none; 
+          transition: filter 0.3s ease;
+        }
+        .product-card.center { 
+          transform: scale(1.15); 
+          z-index: 20; 
+          opacity: 1; 
+          pointer-events: auto; 
+        }
+        .product-card.center img { filter: brightness(1.1); }
+        .product-card:not(.center) { 
+          opacity: 0.5; 
+          pointer-events: none; 
+          transform: scale(0.9);
+        }
 
         .arrow-btn {
-          position: absolute; top: 50%; transform: translateY(-50%); background: #d4a017; border: none;
-          width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 24px;
-          font-weight: bold; z-index: 20; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #111;
+          position: absolute; 
+          top: 50%; 
+          transform: translateY(-50%); 
+          background: #d4a017; 
+          border: none;
+          width: 54px; 
+          height: 54px; 
+          border-radius: 50%; 
+          cursor: pointer; 
+          font-size: 30px;
+          font-weight: bold; 
+          z-index: 50; 
+          transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          color: #111;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .arrow-btn:hover { background: #f2c94c; transform: translateY(-50%) scale(1.1); }
-        .arrow-left { left: 10px; }
-        .arrow-right { right: 10px; }
+        .arrow-btn:hover { 
+          background: #f2c94c; 
+          transform: translateY(-50%) scale(1.1); 
+          box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .arrow-btn:active { transform: translateY(-50%) scale(0.95); }
+        .arrow-left { left: -20px; }
+        .arrow-right { right: -20px; }
+        
+        @media (max-width: 1240px) {
+          .arrow-left { left: 10px; }
+          .arrow-right { right: 10px; }
+        }
 
         @media (min-width: 769px) {
             body, a, button, [role="button"], input, textarea { cursor: none !important; }

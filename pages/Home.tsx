@@ -1,14 +1,26 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
+  const [startX, setStartX] = useState<number | null>(null);
   const [productsList, setProductsList] = useState([
     {
+      id: 5,
+      name: "Drilling Bits",
+      image: "https://i.ibb.co/SZy7WZq/unnamed-2.jpg",
+      description: "Premium industrial-grade drilling bits engineered for superior cutting efficiency and maximum durability in diverse rock types and deep-well applications."
+    },
+    {
+      id: 3,
+      name: "UPVC Pipes for Bore Hole",
+      image: "https://i.ibb.co/20xcVnv1/unnamed.jpg",
+      description: "Heavy-duty UPVC borewell casing pipes manufactured for corrosion resistance, high load capacity, and long-term groundwater extraction."
+    },
+    {
       id: 1,
-      name: "Drilling Rods",
-      image: "https://i.ibb.co/8LcMVxWk/unnamed-1.jpg",
-      description: "High-strength drilling rods designed for deep borewell and mining operations with superior durability and torque resistance."
+      name: "Borehole Drilling Rigs",
+      image: "https://i.ibb.co/p6GsKQTZ/unnamed.jpg",
+      description: "Advanced hydraulic borehole drilling rigs engineered for high performance, precision depth, and robust operation in the most demanding geological terrains."
     },
     {
       id: 2,
@@ -17,10 +29,10 @@ const Home: React.FC = () => {
       description: "Precision-engineered DTH hammer bits built for maximum penetration rate and long service life in hard rock drilling."
     },
     {
-      id: 3,
-      name: "UPVC Pipes for Bore Hole",
-      image: "https://i.ibb.co/20xcVnv1/unnamed.jpg",
-      description: "Heavy-duty UPVC borewell casing pipes manufactured for corrosion resistance, high load capacity, and long-term groundwater extraction."
+      id: 4,
+      name: "Iron Casing (Temporary Casing)",
+      image: "https://i.ibb.co/TxCdSZZR/a59f665b-533b-462a-8be7-cd8b54312136.jpg",
+      description: "Premium-grade iron casing pipes designed for temporary borewell support, offering exceptional structural integrity and easy retrieval in challenging soil conditions."
     }
   ]);
 
@@ -40,6 +52,23 @@ const Home: React.FC = () => {
       if (last) newList.unshift(last);
       return newList;
     });
+  };
+
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setStartX(clientX);
+  };
+
+  const handleDragEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    if (startX === null) return;
+    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
+    const diff = startX - clientX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextSlide();
+      else prevSlide();
+    }
+    setStartX(null);
   };
 
   const openImage = (src: string) => {
@@ -161,20 +190,27 @@ const Home: React.FC = () => {
           </div>
 
           <div className="product-wrapper">
-            <button className="arrow-btn arrow-left" onClick={prevSlide}>‹</button>
+            <button className="arrow-btn arrow-left" onClick={prevSlide} aria-label="Previous product">‹</button>
 
-            <div id="product-track" className="product-track">
+            <div 
+              id="product-track" 
+              className="product-track cursor-grab active:cursor-grabbing select-none"
+              onMouseDown={handleDragStart}
+              onMouseUp={handleDragEnd}
+              onTouchStart={handleDragStart}
+              onTouchEnd={handleDragEnd}
+            >
               {productsList.map((product, index) => (
                 <div 
                   key={product.id} 
-                  className={`product-card ${index === 1 ? 'center' : ''}`}
+                  className={`product-card ${index === 2 ? 'center' : ''}`}
                 >
-                  <div className="bg-[#1c1c1c] border border-white/5 rounded-xl overflow-hidden shadow-2xl h-full flex flex-col p-0 select-none">
+                  <div className="bg-[#1c1c1c] border border-white/5 rounded-xl overflow-hidden shadow-2xl h-full flex flex-col p-0">
                     <div className="relative overflow-hidden aspect-[4/3] rounded-t-xl">
                       <img 
                         src={product.image} 
                         alt={product.name} 
-                        className="w-full h-full object-cover" 
+                        className="w-full h-full object-cover pointer-events-none" 
                         draggable="false"
                       />
                     </div>
@@ -197,7 +233,7 @@ const Home: React.FC = () => {
               ))}
             </div>
 
-            <button className="arrow-btn arrow-right" onClick={nextSlide}>›</button>
+            <button className="arrow-btn arrow-right" onClick={nextSlide} aria-label="Next product">›</button>
           </div>
         </div>
       </section>

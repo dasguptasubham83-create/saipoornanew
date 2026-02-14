@@ -40,15 +40,19 @@ export const generateContent = async (prompt: string): Promise<{
 
     let imageUrl = '';
     
-    // Bulletproof extraction for TypeScript strict mode
-    const candidate = imageResponse.candidates?.[0];
-    const parts = candidate?.content?.parts;
-
-    if (parts && Array.isArray(parts)) {
-      for (const part of parts) {
-        if (part.inlineData && part.inlineData.data) {
-          imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-          break;
+    // Fix: Explicitly check for existence to satisfy strict TypeScript checks
+    const candidates = imageResponse.candidates;
+    if (candidates && candidates.length > 0) {
+      const candidate = candidates[0];
+      if (candidate && candidate.content && candidate.content.parts) {
+        const parts = candidate.content.parts;
+        if (Array.isArray(parts)) {
+          for (const part of parts) {
+            if (part.inlineData && part.inlineData.data) {
+              imageUrl = `data:image/png;base64,${part.inlineData.data}`;
+              break;
+            }
+          }
         }
       }
     }
